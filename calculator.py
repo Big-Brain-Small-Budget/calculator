@@ -1,17 +1,16 @@
 import tkinter as tk
-from functools import partial
 
 
 # sets up main window
 window = tk.Tk()
 window.configure(background="white")
-window.geometry("700x500+350+100")
+window.geometry("750x570+350+80")
 window.title("big brain small budget shopping calculator")
 
-
+# sets product parameters
 productAmount = 4
-products = ["Toaster", "Vacuum", "Insurance", "...---..."]
-prices = [34.99, 799.99, 899.99, 1]
+products = ["Toaster", "Vacuum", "Insurance", "Charity"]
+prices = [34.99, 799.99, 899.99, 2]
 
 frames = []
 productTitles = []
@@ -22,81 +21,136 @@ amounts = []
 amountLabels = []
 totals = []
 totalLabels = []
-endTotal = 0
+endTotal = 0.0
 
 for i in range(productAmount):
     amounts.append(0)
+    totals.append(0.0)
 
-
+# increasing amount of a selected product
 def addAmount(index):
     global amounts
-    amounts[index] += 1
-    amountLabels[index].configure(text=str(amounts[index]))
+    global totals
+    global endTotal
     
-    print(amounts)
+    amounts[index] = round(min(amounts[index] + 1, 99), 2)
+    totals[index] = round(prices[index] * amounts[index], 2)
     
+    endTotal = 0
+    for total in totals:
+        endTotal += total
+    endTotal = round(endTotal, 2)
+    
+    amountLabels[index].configure(text="Units: " + str(amounts[index]))
+    totalLabels[index].configure(text="€" + str(totals[index]))
+    endTotalLabel.configure(text="Subtotal: €" + str(endTotal))
+
+    print(totals)
+
+
+# decreasing amount of a selected product
 def subAmount(index):
     global amounts
-    amounts[index] -= 1
-    amountLabels[index].configure(text=str(amounts[index]))
+    global totals
+    global endTotal
     
-    print(amounts)
+    amounts[index] = round(max(amounts[index] - 1, 0), 2)
+    totals[index] = round(prices[index] * amounts[index], 2)
+
+    endTotal = 0
+    for total in totals:
+        endTotal += round(total, 2)
+    
+    amountLabels[index].configure(text="Units: " + str(amounts[index]))
+    totalLabels[index].configure(text="€" + str(totals[index]))
+    endTotalLabel.configure(text="Subotal: €" + str(endTotal))
+    
+    print(totals)
 
 
-title = tk.Label(text="this is insane.",
+# creates title
+title = tk.Label(text="BBSB Official Calculator",
                  width=440,
                  fg="white",
                  bg="gray",
-                 font=("Arial", 40),
+                 font=("Courier", 32, "bold"),
                  borderwidth=5,
-                 relief="groove")
+                 relief="raised")
 title.pack(padx=20, pady=20)
 
 
+# creates label to display final total
+endTotalLabel = tk.Label(text="Subtotal: €" + str(endTotal),
+                         fg="white",
+                         bg="black",
+                         font=("Courier", 18, "bold"),
+                         borderwidth=3,
+                         relief="sunken")
+endTotalLabel.pack(padx=20)
+
+
+# main interface creation loop
 for i in range(productAmount):
     frames.append(tk.Frame(window,
-                  highlightbackground="black",
-                  highlightthickness=1))
+                          bg="gray",
+                          borderwidth=5,
+                          relief="sunken"))
     frames[i].pack(fill="x", padx=20, pady=20)
     
     productTitles.append(tk.Label(frames[i],
                         text=products[i],
                         font=("Arial", 18),
                         fg="white",
-                        bg="blue"))
+                        bg="blue",
+                        borderwidth=3,
+                        relief="raised"))
     productTitles[i].pack(side="left", padx=10, pady=10)
     
     priceTags.append(tk.Label(frames[i],
-                    text="€" + str(prices[i]),
+                    text="Price: €" + str(prices[i]),
                     font=("Arial", 18),
                     fg="white",
-                    bg="red"))
+                    bg="red",
+                    borderwidth=3,
+                    relief="raised"))
     priceTags[i].pack(side="left", padx=10, pady=10)
     
     plusButtons.append(tk.Button(frames[i],
                  text="+",
                  font=("Arial", 11),
+                 borderwidth=3,
+                 relief="raised",
                  command=lambda x=i: addAmount(x)))
     plusButtons[i].pack(side="left", padx=10, pady=10)
     
     minusButtons.append(tk.Button(frames[i],
                  text="-",
                  font=("Arial", 11),
+                 borderwidth=3,
+                 relief="raised",
                  command=lambda x=i: subAmount(x)))
     minusButtons[i].pack(side="left", padx=10, pady=10)
     
     amountLabels.append(tk.Label(frames[i],
-                    text=amounts[i],
+                    text="Units: " + str(amounts[i]),
                     font=("Arial", 18),
                     fg="white",
-                    bg="red"))
+                    bg="red",
+                    borderwidth=3,
+                    relief="raised"))
     amountLabels[i].pack(side="left", padx=10, pady=10)
     
-    
-    print(i)
+    totalLabels.append(tk.Label(frames[i],
+                                text="€" + str(totals[i]),
+                                font=("Arial", 18),
+                                fg="white",
+                                bg="red",
+                                borderwidth=3,
+                                relief="raised"))
+    totalLabels[i].pack(side="left", padx=10, pady=10)
 
 
-print(amounts)
+print(totals)
 
 window.mainloop()
 
@@ -133,6 +187,12 @@ window.mainloop()
 # add1 = tk.Button(frame1,
 #                  text="+",
 #                  command=addAmount)
+# add1.pack(side="left", padx=10, pady=10)
+
+# sub1 = tk.Button(frame1,
+#                  text="-",
+#                  command=subAmount)
+# sub1.pack(side="left", padx=10, pady=10)
 # add1.pack(side="left", padx=10, pady=10)
 
 # sub1 = tk.Button(frame1,
